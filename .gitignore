@@ -1,0 +1,16 @@
+# All data files, large
+**/*.csv
+**/*.vot
+**/*.fits
+**/*.fit
+
+# Other not important stuff
+slides/
+.ipynb_checkpoints/
+.vscode/
+
+# Experiments
+experiments/*
+
+# But not these files
+!tables/*
