@@ -8,6 +8,11 @@ ltypes = ['QSO', 'AGN', 'Seyfert_1', 'Seyfert_2', 'HMXB', 'LMXB', 'XB', 'YSO', '
 grouped_replace = {'QSO': 'AGN', 'Seyfert_1': 'Seyfert', 'Seyfert_2': 'Seyfert', 'HMXB': 'XB', 'LMXB':'XB', 'TTau*':'YSO', 'Orion_V*': 'YSO'}
 classified_df = pd.read_csv('./out_data/detection_level_classification.csv', index_col=0)
 
+# Features
+features = ['hard_hm', 'hard_hs', 'hard_ms', 'powlaw_gamma', 'bb_kt',
+            'var_prob_b', 'var_ratio_b', 'var_prob_h', 'var_ratio_h',
+            'var_prob_s', 'var_ratio_s', 'var_newq_b']
+
 # Helper functions
 def mean_std_round(x):
     return f"{round(np.mean(x), 3)}±{round(np.std(x), 3)}"
@@ -19,7 +24,8 @@ def most_common(x):
 summ_table = classified_df.groupby('name')[ltypes].agg(mean_std_round)
 summ_table['detection_count'] = classified_df.groupby(['name']).size()
 ra_dec_df = classified_df.groupby('name')[['ra', 'dec']].first()
-summ_table = summ_table.join(ra_dec_df)
+features_df = classified_df.groupby('name')[features].first()
+summ_table = summ_table.join([ra_dec_df, features_df])
 summ_table_prov = classified_df.groupby('name')[ltypes].agg(['mean', 'std'])
 class_mean_names = [list(tup) for tup in itertools.product(ltypes, ['mean'], repeat=1)]
 names_comp = summ_table_prov[class_mean_names].idxmax(axis=1).to_list()
@@ -38,7 +44,7 @@ summ_table_hard.sort_values('detection_count', ascending=False, inplace=True)
 uniquely_classified_df = summ_table[summ_table.soft_master_class == summ_table_hard.hard_master_class].copy()
 uniquely_classified_df = uniquely_classified_df.rename(columns={'soft_master_class':'master_class'})
 uniquely_classified_df['agg_master_class'] = uniquely_classified_df['master_class'].replace(grouped_replace)
-unique_cols = ['agg_master_class', 'master_class', 'detection_count'] + ltypes + ['ra', 'dec']
+unique_cols = ['agg_master_class', 'master_class', 'detection_count'] + ltypes + ['ra', 'dec'] + features
 uniquely_classified_df_out = uniquely_classified_df[unique_cols]
 uniquely_classified_df_out.to_csv('./out_data/uniquely_classified.csv', encoding='utf-8')
 print('Uniquely classified table generated.')
@@ -46,7 +52,7 @@ print('Uniquely classified table generated.')
 # Ambiguous
 ambiguous_class_df = summ_table[summ_table.soft_master_class != summ_table_hard.hard_master_class].copy()
 ambiguous_class_df['hard_master_class'] = summ_table_hard['hard_master_class']
-ambiguous_cols = ['hard_master_class', 'soft_master_class', 'detection_count'] + ltypes + ['ra', 'dec']
+ambiguous_cols = ['hard_master_class', 'soft_master_class', 'detection_count'] + ltypes + ['ra', 'dec'] + features
 ambiguous_class_df_out = ambiguous_class_df[ambiguous_cols]
 ambiguous_class_df_out.to_csv('./out_data/ambiguous_classification.csv', encoding='utf-8')
 print('Ambiguous table generated.')

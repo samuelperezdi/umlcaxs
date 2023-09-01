@@ -166,6 +166,7 @@ def mahal_classifier_cl(cl, cl_raw, features, ltypes, uks=[], singular_out_mode=
     # Filter data based on 'main_type' and 'uks'
     filter_condition = (cl.main_type == 'NaN') | cl.main_type.isin(uks)
     cl_nan = cl[filter_condition]
+    cl_nan_raw = cl_raw[filter_condition]
     
     # Select feature columns
     cl_nan_feat = cl_nan[features]
@@ -197,7 +198,10 @@ def mahal_classifier_cl(cl, cl_raw, features, ltypes, uks=[], singular_out_mode=
     # Construct output DataFrame
     types_probs = pd.DataFrame(sm_probs, columns=ltypes, index=cl_nan.index)
     firstcols = ['name', 'obsid', 'cluster', 'ra', 'dec', 'main_type']
-    out_classification = cl_nan[firstcols].join(types_probs)
+    features = ['hard_hm', 'hard_hs', 'hard_ms', 'powlaw_gamma', 'bb_kt',
+            'var_prob_b', 'var_ratio_b', 'var_prob_h', 'var_ratio_h',
+            'var_prob_s', 'var_ratio_s', 'var_newq_b']
+    out_classification = cl_nan[firstcols].join(types_probs).join(cl_nan_raw[features])
     out_classification['main_type'] = types_comp
     
     return out_classification
