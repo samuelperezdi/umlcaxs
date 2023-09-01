@@ -3,7 +3,7 @@ import pandas as pd
 import itertools
 from collections import Counter
 
-# Initialization
+# Class definitions
 ltypes = ['QSO', 'AGN', 'Seyfert_1', 'Seyfert_2', 'HMXB', 'LMXB', 'XB', 'YSO', 'TTau*', 'Orion_V*']
 grouped_replace = {'QSO': 'AGN', 'Seyfert_1': 'Seyfert', 'Seyfert_2': 'Seyfert', 'HMXB': 'XB', 'LMXB':'XB', 'TTau*':'YSO', 'Orion_V*': 'YSO'}
 classified_df = pd.read_csv('./out_data/detection_level_classification.csv', index_col=0)

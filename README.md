@@ -30,7 +30,7 @@ The Chandra Source Catalog (CSC) is the ultimate repository of sources detected 
 
 **Note**: Due to the ever-changing nature of the SIMBAD database, the exact results presented in the paper may not be reproducible. Our crossmatch was performed in August 2022. We provide the original `cluster_csc_simbad.csv`. With this, you can reproduce the same result starting from step 3.
 
-The clustering outcomes might not be strictly identical as the provided `cluster_csc.csv`, potentially due to various factors such as library version discrepancies and instability in floating-point arithmetic. Despite these variations, the cluster assignments remain highly consistent with the original results, achieving an Adjusted Rand Index [(ARI)](https://scikit-learn.org/stable/modules/generated/sklearn.metrics.adjusted_rand_score.html) of 0.99, which indicates near-perfect agreement.
+For exact reproducibility, we suggest to install package versions provided in the `environment.txt` file.
 
 #### Pipeline execution steps
 
