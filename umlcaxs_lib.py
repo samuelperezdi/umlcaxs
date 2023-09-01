@@ -3,11 +3,10 @@ Unsupervised Machine Learning for the Classification of Astrophysical X-ray Sour
 
 Víctor Samuel Pérez-Díaz, Rafael Martínez-Galarza, Alexander Caicedo-Dorado, Raffaele D'Abrusco
 
-This is the UMLCAXS library. All important functions and procedures that are used in our analysis are stored here.
+This is the UMLCAXS library. Important functions and procedures that are used in our analysis are stored here.
 '''
 import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
 from astropy.io.votable import parse
 from astropy.table import Table
 from sklearn.preprocessing import MinMaxScaler
@@ -26,35 +25,38 @@ def votable_to_pandas(votable_file):
     table = votable.get_first_table().to_table(use_names_over_ids=True)
     return table.to_pandas()
 
-
 def lognorm(X_df, features, features_norm, features_lognorm):
-    '''
-    If log is true
-    apply log transform adding the minimum non-zero value divided by ten in order to preserve zero properties, then normalize,
-    else just normalize.
-    '''
-    X = X_df.copy(deep=True).to_numpy()
-    for name_desc in features:
-        col = X_df.columns.get_loc(name_desc)
-        X_desc = X_df[name_desc]
-        
-        if name_desc in features_lognorm:
-            nonzero = X_desc[X_desc!=0]
-            minval = np.min(nonzero)/10
+    """
+    Normalize and log-transform features based on the given sets of feature names.
+    
+    Parameters:
+        X_df: pandas DataFrame containing the features
+        features: List of feature names to be processed
+        features_norm: List of feature names to be normalized
+        features_lognorm: List of feature names to be log-transformed then normalized
+    
+    Returns:
+        A pandas DataFrame containing the processed features.
+    """
+    X = X_df.copy(deep=True)
+    min_max_scaler = MinMaxScaler(feature_range=(0, 1))
+    
+    for feature in features:
+        if feature in X.columns:
+            column_data = X[feature]
+            
+            if feature in features_lognorm:
+                min_val = np.min(column_data[column_data != 0]) / 10
+                transformed_data = np.log(column_data + min_val)
+            elif feature in features_norm:
+                transformed_data = column_data
+            else:
+                continue
 
-            X_desc = X_desc + minval
+            scaled_data = min_max_scaler.fit_transform(transformed_data.values.reshape(-1, 1))
+            X[feature] = scaled_data.flatten()
 
-            x = np.log(X_desc.values)
-        elif name_desc in features_norm:
-            x = X_desc.to_numpy()
-        else:
-            continue
-        min_max_scaler = MinMaxScaler(feature_range=(0,1))
-        x_scaled = min_max_scaler.fit_transform(x.reshape(-1,1))
-        X[:,col] = x_scaled.flatten()
-
-    X_df_return = pd.DataFrame(X, columns=X_df.columns).astype(X_df.dtypes.to_dict())
-    return X_df_return
+    return X.astype(X_df.dtypes.to_dict())
 
 def compute_bics(X, max_clusters, iterations=1):
     '''
@@ -97,86 +99,108 @@ def compute_silhouettes(X, max_clusters, iterations=1):
 
     return silhouette_scores_df
 
-def mahalanobis(x=None, data=None, pseudo=False):
-    '''Compute the Mahalanobis Distance between each row of x and the distribution of data. 
+def mahalanobis(x, data):
+    """
+    Compute the Mahalanobis Distance between each row of x and the data distribution.
     Adapted from https://www.machinelearningplus.com/statistics/mahalanobis-distance/.
-    x    : dataframe with observations.
-    data : dataframe of the distribution from which the distance is to be computed.
-    '''
-    data = data.astype(float)
-    x = x.astype(float)
-    x_mean_subs = x - np.mean(data, axis=0)
-    
-    cov = np.cov(data.values.T)
 
-    invcov = pinv(cov)
-    t_one = np.dot(x_mean_subs, invcov)
-    t_two = x_mean_subs.T
-    mahal = np.dot(t_one, t_two)
+    Parameters:
+    x : DataFrame with observations.
+    data : DataFrame of the distribution to compute distance from.
+
+    Returns:
+    A numpy array containing the Mahalanobis distances.
+    """
+    x, data = x.astype(float), data.astype(float)
+    x_mean_subs = x - np.mean(data, axis=0)
+    cov_matrix = np.cov(data.values.T)
+    inv_cov_matrix = pinv(cov_matrix)
     
-    return mahal.diagonal()
+    temp = np.dot(x_mean_subs, inv_cov_matrix)
+    mahal_dist = np.dot(temp, x_mean_subs.T).diagonal()
+    
+    return mahal_dist
     
 def create_summary_tables(df):
-    '''
-    Creates a summary table of the number of source detection by each class in a dataframe of the CSCq + SIMBAD dataset. 
-    '''
-    data_n = df.copy(deep=True)
-    count_obs = data_n.groupby(['main_type']).size()
-    df_n = pd.concat([count_obs], axis=1)
-    df_n = df_n.rename(columns={0:'size'})
-    return df_n.sort_values(by='size', ascending=False)
+    """
+    Create a summary table of the number of source detections by each class
+    in a DataFrame of the cluster CSC + SIMBAD dataset.
+
+    Parameters:
+    df : DataFrame containing the dataset.
+
+    Returns:
+    A sorted DataFrame summarizing the number of source detections by class.
+    """
+    grouped_data = df.groupby('main_type').size().reset_index(name='size')
+    return grouped_data.sort_values(by='size', ascending=False)
 
 def softmin(x):
-    '''
-    Softmin function.
-    '''
-    return np.exp(-np.abs(x))/sum(np.exp(-np.abs(x)))
+    """
+    Compute the softmin function on an array.
+    
+    Parameters:
+    x : numpy array or list
+    
+    Returns:
+    Softmin values corresponding to the input array.
+    """
+    exp_neg_abs_x = np.exp(-np.abs(x))
+    return exp_neg_abs_x / exp_neg_abs_x.sum()
 
 def mahal_classifier_cl(cl, cl_raw, features, ltypes, uks=[], singular_out_mode=True):
-    '''
-    Classify source detections using the Mahalanobis Distance for a particular cluster.
-    cl: dataframe of the cluster.
-    features: list of feature names to consider.
-    ltypes: list of classes names to consider.
-    uks: list of classes names that are ambiguous.
-    singular_out_mode: boolean determining if the method forces 0 probability for the classes 
-    with a singular matrix (number of observations < number of features), or if it uses the
-    pseudoinverse instead.
-    '''
-    if uks:
-        cl_nan = cl[(cl.main_type == 'NaN') | cl.main_type.isin(uks)]
-        cl_nan_raw = cl_raw[(cl_raw.main_type == 'NaN') | cl_raw.main_type.isin(uks)]
-    else:
-        cl_nan = cl[cl.main_type == 'NaN']
-        cl_nan_raw = cl_raw[cl_raw.main_type == 'NaN']
-
+    """
+    Classify source detections using Mahalanobis Distance for a specific cluster.
+    
+    Parameters:
+    cl : DataFrame of the cluster
+    cl_raw : Raw DataFrame of the cluster
+    features : List of feature names
+    ltypes : List of class names
+    uks : List of ambiguous class names (optional)
+    singular_out_mode : Whether to force 0 probability for classes with singular matrices
+    
+    Returns:
+    DataFrame with classification information
+    """
+    # Filter data based on 'main_type' and 'uks'
+    filter_condition = (cl.main_type == 'NaN') | cl.main_type.isin(uks)
+    cl_nan = cl[filter_condition]
+    
+    # Select feature columns
     cl_nan_feat = cl_nan[features]
+    
+    # Initialize list to store distances
     ltypes_distances = []
+    
     for t in ltypes:
         cl_type = cl[cl.main_type == t]
         cl_type_feat = cl_type[features]
+        
+        # Handle singular matrix case
         if cl_type_feat.shape[0] < cl_type_feat.shape[1] and singular_out_mode:
             ltypes_distances.append([np.inf]*cl_nan_feat.shape[0])
             continue
 
+        # Compute Mahalanobis distance
         o_mahal_distance = mahalanobis(cl_nan_feat, cl_type_feat)
         ltypes_distances.append(o_mahal_distance)
     
+    # Stack distances into a NumPy array and compute softmin probabilities
     ltypes_dis_np = np.column_stack(ltypes_distances)
-
     sm_probs = np.apply_along_axis(softmin, 1, ltypes_dis_np)
-    t_amax = np.apply_along_axis(np.argmax, 1, sm_probs)
-    types_comp = [ltypes[tname] for tname in t_amax]
+    
+    # Find the most probable class for each source
+    t_amax = np.argmax(sm_probs, axis=1)
+    types_comp = [ltypes[idx] for idx in t_amax]
+    
+    # Construct output DataFrame
     types_probs = pd.DataFrame(sm_probs, columns=ltypes, index=cl_nan.index)
-
-    firstcols = ['name', 'obsid', 'cluster', 'main_type']
-    diffcols = [i for i in cl_nan.columns if i not in firstcols]
+    firstcols = ['name', 'obsid', 'cluster', 'ra', 'dec', 'main_type']
     out_classification = cl_nan[firstcols].join(types_probs)
     out_classification['main_type'] = types_comp
-    out_classification = pd.concat([out_classification.reset_index(drop=True), cl_nan_raw[diffcols].reset_index(drop=True)], axis=1)
-
+    
     return out_classification
-
 
 def process_data_for_validation(data, types, uks):
     '''
@@ -209,23 +233,37 @@ def mahal_classifier_validation(X_train, X_test, features, ltypes, uks=[], singu
     return pred_class_df
 
 def mahal_classifier_all(data, data_raw, features, ltypes, uks=[], singular_out_mode=True):
-    '''
-    Wrapper of method mahal_classifier_cl, takes a complete dataframe and classify it using our
-    cluster-wise classification technique.
-    '''
-    classified_cls= []
+    """
+    Classify an entire dataframe using cluster-wise classification.
+    
+    Parameters:
+    data : DataFrame containing the data
+    data_raw : Raw DataFrame of the cluster
+    features : List of feature names
+    ltypes : List of class names
+    uks : List of ambiguous class names (optional)
+    singular_out_mode : Whether to force 0 probability for classes with singular matrices
+    
+    Returns:
+    DataFrame with classification information
+    """
+    classified_dfs = []
+    
     for cl_i in range(6):
         print(f'***Cluster {cl_i}***')
-        data_cl = data[data.cluster == cl_i]
-        data_cl_raw = data_raw[data_raw.cluster == cl_i]
-        cl_class = mahal_classifier_cl(data_cl, data_cl_raw, features, ltypes, uks, singular_out_mode)
-        classified_cls.append(cl_class)
         
-    classified_df = pd.concat(classified_cls)
+        data_cl = data[data['cluster'] == cl_i]
+        data_cl_raw = data_raw[data_raw['cluster'] == cl_i]
+        
+        cl_classified = mahal_classifier_cl(data_cl, data_cl_raw, features, ltypes, uks, singular_out_mode)
+        classified_dfs.append(cl_classified)
+    
+    classified_df = pd.concat(classified_dfs)
     classified_df.sort_values(by=['name', 'obsid'], inplace=True)
     classified_df.reset_index(drop=True, inplace=True)
-
+    
     return classified_df
+
 
 def extract_sources_aladin(df, source_type, agg_type=False):
     if agg_type:

@@ -1,1 +1,0 @@
-- Make sure that properties in final table are mean +- std.
