@@ -64,3 +64,8 @@ Inspect the resulting tables in the `/out_data` directory:
 - `ambiguous_classification.csv`
 
 By following these steps, you should be able to closely replicate the pipeline presented in the paper.
+
+---
+## Classify your own X-ray source
+
+Check the notebook `classify_your_source.ipynb` for instructions on how to classify your own X-ray source(s) with our pipeline.

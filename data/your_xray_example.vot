@@ -1,0 +1,138 @@
+<?xml version="1.0"?>
+<VOTABLE version="1.2"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns="http://www.ivoa.net/xml/VOTable/v1.2"
+  xsi:schemaLocation="http://www.ivoa.net/xml/VOTable/v1.2 http://www.ivoa.net/xml/VOTable/v1.2"
+  xmlns:stc="http://www.ivoa.net/xml/STC/v1.30">
+<RESOURCE name="CSC">
+<TABLE name="null">
+<FIELD ID="col0" datatype="double" name="separation" precision="F2" ucd="pos.angDistance" unit="arcsec" width="9">
+<DESCRIPTION>Distance from master source to user source</DESCRIPTION>
+</FIELD>
+<FIELD ID="col1" arraysize="*" datatype="char" name="name" width="22">
+<DESCRIPTION>Source name in the format '2CXO Jhhmmss.s{+|-}ddmmss[X]'</DESCRIPTION>
+</FIELD>
+<FIELD ID="col2" datatype="int" name="obsid" width="5">
+<DESCRIPTION>Observation identifier</DESCRIPTION>
+<VALUES null='-2147483648'/>
+</FIELD>
+<FIELD ID="col3" datatype="double" name="ra" ucd="pos.eq.ra;meta.main">
+<DESCRIPTION>Source position, ICRS right ascension</DESCRIPTION>
+</FIELD>
+<FIELD ID="col4" datatype="double" name="dec" ucd="pos.eq.dec;meta.main">
+<DESCRIPTION>Source position, ICRS declination</DESCRIPTION>
+</FIELD>
+<FIELD ID="col5" datatype="double" name="err_ellipse_r0" precision="F2" unit="arcsec">
+<DESCRIPTION>Major radius of the 95% confidence level position error ellipse</DESCRIPTION>
+</FIELD>
+<FIELD ID="col6" datatype="double" name="err_ellipse_r1" precision="F2" unit="arcsec">
+<DESCRIPTION>Minor radius of the 95% confidence level position error ellipse</DESCRIPTION>
+</FIELD>
+<FIELD ID="col7" datatype="double" name="err_ellipse_ang" precision="F1" unit="deg">
+<DESCRIPTION>Position angle (ref. local true north) of the major axis of the 95% confidence level error ellipse</DESCRIPTION>
+</FIELD>
+<FIELD ID="col8" datatype="double" name="significance" precision="F2">
+<DESCRIPTION>Highest flux significance (S/N) across all stacked observations and energy bands</DESCRIPTION>
+</FIELD>
+<FIELD ID="col9" arraysize="*" datatype="char" name="likelihood_class">
+<DESCRIPTION>Highest detection likelihood classification across all stacked observations and energy bands</DESCRIPTION>
+</FIELD>
+<FIELD ID="col10" datatype="double" name="hard_ms" precision="F4">
+<DESCRIPTION>ACIS medium (1.2-2.0 keV) - soft (0.5-1.2 keV) energy band photon flux hardness ratio</DESCRIPTION>
+</FIELD>
+<FIELD ID="col11" datatype="double" name="hard_hm" precision="F4">
+<DESCRIPTION>ACIS hard (2.0-7.0 keV) - medium (1.2-2.0 keV) energy band photon flux hardness ratio</DESCRIPTION>
+</FIELD>
+<FIELD ID="col12" datatype="double" name="hard_hs" precision="F4">
+<DESCRIPTION>ACIS hard (2.0-7.0 keV) - soft (0.5-1.2 keV) energy band photon flux hardness ratio</DESCRIPTION>
+</FIELD>
+<FIELD ID="col13" datatype="double" name="powlaw_gamma" precision="F3">
+<DESCRIPTION>Photon index, defined as F_E ~ E^(-Gamma), of the best fitting  absorbed power-law model spectrum to the source region aperture PI spectrum</DESCRIPTION>
+</FIELD>
+<FIELD ID="col14" datatype="double" name="bb_kt" precision="E4" unit="keV">
+<DESCRIPTION>Temperature (kT) of the best fitting  absorbed black body model spectrum to the source region aperture PI spectrum</DESCRIPTION>
+</FIELD>
+<FIELD ID="col15" datatype="double" name="var_prob_b" precision="F3">
+<DESCRIPTION>Intra-observation Gregory-Loredo variability probability; ACIS broad (0.5-7.0 keV) energy band</DESCRIPTION>
+</FIELD>
+<FIELD ID="col16" datatype="double" name="var_prob_h" precision="F3">
+<DESCRIPTION>Intra-observation Gregory-Loredo variability probability; ACIS hard (2.0-7.0 keV) energy band</DESCRIPTION>
+</FIELD>
+<FIELD ID="col17" datatype="double" name="var_prob_m" precision="F3">
+<DESCRIPTION>Intra-observation Gregory-Loredo variability probability; ACIS medium (1.2-2.0 keV) energy band</DESCRIPTION>
+</FIELD>
+<FIELD ID="col18" datatype="double" name="var_prob_s" precision="F3">
+<DESCRIPTION>Intra-observation Gregory-Loredo variability probability; ACIS soft (0.5-1.2 keV) energy band</DESCRIPTION>
+</FIELD>
+<FIELD ID="col19" datatype="double" name="var_mean_b" precision="E4" unit="count/s">
+<DESCRIPTION>Flux variability mean value, calculated from an optimally-binned light curve; ACIS broad (0.5-7.0 keV) energy band</DESCRIPTION>
+</FIELD>
+<FIELD ID="col20" datatype="double" name="var_mean_h" precision="E4" unit="count/s">
+<DESCRIPTION>Flux variability mean value, calculated from an optimally-binned light curve; ACIS hard (2.0-7.0 keV) energy band</DESCRIPTION>
+</FIELD>
+<FIELD ID="col21" datatype="double" name="var_mean_m" precision="E4" unit="count/s">
+<DESCRIPTION>Flux variability mean value, calculated from an optimally-binned light curve; ACIS medium (1.2-2.0 keV) energy band</DESCRIPTION>
+</FIELD>
+<FIELD ID="col22" datatype="double" name="var_mean_s" precision="E4" unit="count/s">
+<DESCRIPTION>Flux variability mean value, calculated from an optimally-binned light curve; ACIS soft (0.5-1.2 keV) energy band</DESCRIPTION>
+</FIELD>
+<FIELD ID="col23" datatype="double" name="var_sigma_h" precision="E4" unit="count/s">
+<DESCRIPTION>Flux variability standard deviation, calculated from an optimally-binned light curve; ACIS hard (2.0-7.0 keV) energy band</DESCRIPTION>
+</FIELD>
+<FIELD ID="col24" datatype="double" name="var_sigma_m" precision="E4" unit="count/s">
+<DESCRIPTION>Flux variability standard deviation, calculated from an optimally-binned light curve; ACIS medium (1.2-2.0 keV) energy band</DESCRIPTION>
+</FIELD>
+<FIELD ID="col25" datatype="double" name="var_sigma_u" precision="E4" unit="count/s">
+<DESCRIPTION>Flux variability standard deviation, calculated from an optimally-binned light curve; ACIS ultrasoft (0.2-0.5 keV) energy band</DESCRIPTION>
+</FIELD>
+<FIELD ID="col26" datatype="double" name="var_sigma_s" precision="E4" unit="count/s">
+<DESCRIPTION>Flux variability standard deviation, calculated from an optimally-binned light curve; ACIS soft (0.5-1.2 keV) energy band</DESCRIPTION>
+</FIELD>
+<FIELD ID="col27" datatype="double" name="var_sigma_b" precision="E4" unit="count/s">
+<DESCRIPTION>Flux variability standard deviation, calculated from an optimally-binned light curve; ACIS broad (0.5-7.0 keV) energy band</DESCRIPTION>
+</FIELD>
+<FIELD ID="col28" datatype="double" name="var_max_b" precision="E4" unit="count/s">
+<DESCRIPTION>Flux variability maximum value, calculated from an optimally-binned light curve; ACIS broad (0.5-7.0 keV) energy band</DESCRIPTION>
+</FIELD>
+<FIELD ID="col29" datatype="double" name="var_min_b" precision="E4" unit="count/s">
+<DESCRIPTION>Flux variability minimum value, calculated from an optimally-binned light curve; ACIS broad (0.5-7.0 keV) energy band</DESCRIPTION>
+</FIELD>
+<DATA>
+<TABLEDATA>
+  <TR>
+    <TD>0.1496933777989859</TD>
+    <TD>2CXO J004307.5-092302</TD>
+    <TD>4884</TD>
+    <TD>10.781298349312351</TD>
+    <TD>-9.383953646551543</TD>
+    <TD>0.9486987799982572</TD>
+    <TD>0.8092184025601209</TD>
+    <TD>92.58514294774027</TD>
+    <TD>5.142857142857105</TD>
+    <TD>TRUE</TD>
+    <TD>-0.13616489693941</TD>
+    <TD>0.23110555902561</TD>
+    <TD>0.10243597751405</TD>
+    <TD></TD>
+    <TD></TD>
+    <TD>0.50165526192568</TD>
+    <TD>0.50814899377374</TD>
+    <TD>0.58980749196488</TD>
+    <TD>0.562971133281</TD>
+    <TD>0.0038287120278008738</TD>
+    <TD>0.001575845804562533</TD>
+    <TD>0.001351894367526007</TD>
+    <TD>9.007070382772946E-4</TD>
+    <TD>2.164292244738912E-4</TD>
+    <TD>2.0468243800597912E-4</TD>
+    <TD></TD>
+    <TD>1.1692215714259091E-4</TD>
+    <TD>7.008065460605226E-4</TD>
+    <TD>0.007166455525771607</TD>
+    <TD>0.003322752613583475</TD>
+  </TR>
+</TABLEDATA>
+</DATA>
+</TABLE>
+</RESOURCE>
+</VOTABLE>

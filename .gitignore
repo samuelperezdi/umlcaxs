@@ -1,3 +1,5 @@
 experiments/*
 .ipynb_checkpoints/
 .vscode/
+latex.txt
+tolatex.py
