@@ -1,7 +1,7 @@
 #  UNSUPERVISED MACHINE LEARNING FOR THE CLASSIFICATION OF ASTROPHYSICAL X-RAY SOURCES
 #### Final repository
 
-[Read the paper here. (soon)]()
+[Read the paper here. (now online!)](https://arxiv.org/abs/2401.12203)
 
 [Explore our results interactively here.](https://umlcaxs-playground.streamlit.app/)
 
